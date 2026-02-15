@@ -2,31 +2,37 @@
 
 ## Product Name
 
-Smart Inventory Management System (SIMS)
+Smart Retail Inventory Management System (SRIMS)
 
 ---
 
 ## 1. Problem Statement
 
-Inventory management in small to mid-scale environments (retail stores, hostels/mess kitchens, warehouses, labs) is largely manual. Stock counting is:
+In retail stores, inventory counting is still largely manual. Store employees physically check shelves and backrooms to estimate stock levels. This process is:
 
 * Time-consuming
 * Error-prone
-* Dependent on human diligence
+* Inconsistent across shifts
+* Not scalable as store size or SKU count increases
 
-There is no simple system that allows users to **scan inventory using images and automatically update stock counts**, while also providing a **robust backend for tracking, auditing, and analytics**.
+As a result, retailers face:
+
+* Frequent stock-outs
+* Over-ordering and wastage
+* Poor visibility into real-time inventory
 
 ---
 
 ## 2. Product Vision
 
-Build a **backend-driven inventory management platform** that supports traditional inventory operations and augments them with a **computer vision–based auto-counting feature**.
+Build a **backend-driven smart retail inventory platform** that automates inventory tracking and enhances it with **computer vision–based shelf scanning**.
 
 The system should:
 
-* Work without ML initially
-* Gradually integrate ML as an optional enhancement
-* Be scalable, modular, and production-oriented
+* Work reliably without ML as a baseline
+* Use ML only as an assistive feature, not a dependency
+* Be modular, scalable, and production-oriented
+* Reflect real-world retail workflows
 
 ---
 
@@ -34,33 +40,32 @@ The system should:
 
 ### Primary Users
 
-* Store managers
-* Hostel/mess administrators
-* Warehouse supervisors
+* Retail store managers
+* Inventory supervisors
 
 ### Secondary Users
 
-* Inventory staff
+* Store staff
 * Auditors
-* Developers integrating inventory services
+* Operations analysts
 
 ---
 
 ## 4. Goals & Success Metrics
 
-### Goals
+### Product Goals
 
-* Reduce manual inventory counting effort
-* Improve stock accuracy
-* Provide clear inventory visibility
-* Enable ML-based automation without disrupting core workflows
+* Reduce manual stock counting effort
+* Improve inventory accuracy
+* Provide near real-time inventory visibility
+* Enable automated stock updates from shelf images
 
 ### Success Metrics
 
 * Inventory update latency < 2 seconds
-* Stock accuracy improvement after ML integration
-* Ability to process image-based inventory updates
-* System stability even when ML service is unavailable
+* Reduction in manual counting operations
+* Accurate detection and counting from shelf images
+* Backend remains fully functional even if ML service fails
 
 ---
 
@@ -69,55 +74,57 @@ The system should:
 ### Phase 1: Core Inventory Backend (Non-ML)
 
 * Inventory item CRUD operations
-* Category management
+* Category-based organization
 * Stock quantity tracking
 * Low-stock threshold alerts
 * Inventory audit logs
 
-### Phase 2: Role & Access Management
+### Phase 2: Access & Control
 
 * Admin vs Staff roles
-* Restricted access to critical operations
-* Inventory change tracking per user
+* Controlled inventory modification rights
+* Change tracking per user
 
-### Phase 3: Computer Vision–Based Counting (ML Feature)
+### Phase 3: Computer Vision–Based Inventory Counting
 
-* Image upload for inventory scanning
-* Object detection to identify inventory items
-* Automatic counting per item type
-* Backend validation and update
+* Shelf image upload
+* Object detection of retail items
+* Item-wise count extraction
+* Confidence-based validation
+* Manual override for incorrect detections
 
-### Phase 4: Analytics & Insights
+### Phase 4: Inventory Analytics
 
-* Inventory usage trends
-* Low-stock prediction
+* Stock trend analysis
+* Low-stock prediction signals
 * ML accuracy monitoring
 
 ---
 
 ## 6. Out of Scope (Initial Versions)
 
-* Real payment processing
-* Hardware-level camera integration
+* Payment processing
+* Supplier procurement automation
 * Real-time video stream processing
-* Supplier-side integrations
+* Hardware camera integrations
+* Multi-store chain synchronization
 
 ---
 
 ## 7. User Stories
 
-### Inventory Manager
+### Store Manager
 
-* As a manager, I want to add and update inventory items so that stock is tracked centrally.
-* As a manager, I want alerts when items fall below a threshold.
+* As a store manager, I want to see current stock levels so I can plan reordering.
+* As a store manager, I want alerts when items fall below a threshold.
 
-### Inventory Staff
+### Store Staff
 
-* As a staff member, I want to upload an image of inventory and automatically update counts.
+* As a staff member, I want to upload shelf images to update inventory faster.
 
 ### System
 
-* As a system, I should allow manual overrides if ML-based counting fails.
+* As a system, I must allow manual inventory updates if ML-based counting is unavailable or inaccurate.
 
 ---
 
@@ -125,109 +132,56 @@ The system should:
 
 ### Inventory Management
 
-* Create, update, delete inventory items
-* Adjust quantities manually
-* View inventory by category
+* Create, update, and delete inventory items
+* Update quantities manually
+* View inventory by category and stock level
 
 ### Image-Based Inventory Update
 
 * Accept image uploads
-* Send image to ML inference service
-* Receive item-count mapping
+* Forward images to ML inference service
+* Receive item-to-count mapping
+* Validate confidence scores
 * Update inventory accordingly
 
-### Reliability
+### Reliability & Fallback
 
-* ML service failures must not crash backend
-* Manual fallback must always be available
+* ML failures must not impact core inventory APIs
+* Manual updates must always be available
 
 ---
 
 ## 9. Non-Functional Requirements
 
-* Scalable REST APIs
+* RESTful API design
+* Scalable backend architecture
 * Clear separation between backend and ML services
-* Fault tolerance for ML integration
-* Clean logging and auditability
+* Fault tolerance and graceful degradation
+* Structured logging and auditability
 
 ---
 
-## 10. Technical Architecture (High-Level)
+## 10. High-Level Technical Architecture
 
-### Backend
+### Backend Service
 
-* Spring Boot (REST APIs)
-* PostgreSQL (primary DB)
-* Redis (optional caching)
+* Java 17
+* Spring Boot
+* REST APIs
+* PostgreSQL (primary database)
 
-### ML Service
+### ML Inference Service
 
-* Python-based inference service
+* Python-based service
 * YOLO-based object detection model
-* FastAPI interface
+* REST interface
 
 ### Communication
 
-* REST-based service-to-service calls
+* Backend ↔ ML via REST APIs
 
 ---
 
 ## 11. Data Model (High-Level)
 
-### InventoryItem
-
-* id
-* name
-* category
-* quantity
-* threshold
-* lastUpdated
-
-### InventoryAuditLog
-
-* id
-* itemId
-* oldQuantity
-* newQuantity
-* updatedBy
-* timestamp
-
----
-
-## 12. Risks & Mitigations
-
-| Risk                      | Mitigation                             |
-| ------------------------- | -------------------------------------- |
-| ML model inaccuracies     | Manual override + confidence threshold |
-| Dataset bias              | Controlled dataset creation            |
-| Backend-ML tight coupling | Separate ML microservice               |
-
----
-
-## 13. Milestones
-
-* Phase 1: Core backend ready
-* Phase 2: Role-based access
-* Phase 3: ML integration
-* Phase 4: Analytics & polish
-
----
-
-## 14. Open Questions
-
-* Which inventory domain to prioritize first?
-* Cloud vs local deployment?
-* Real-time vs batch image processing?
-
----
-
-## 15. Summary
-
-This project aims to demonstrate:
-
-* Strong backend engineering skills
-* Practical ML system integration
-* Clean system design and LLD
-* Real-world problem solving
-
-It is designed to be built incrementally, with each phase independently valuable and resume-worthy.
+### Invent
