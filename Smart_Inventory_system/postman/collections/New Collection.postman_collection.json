@@ -1,0 +1,21 @@
+{
+  "info": {
+    "_postman_id": "8aa15025-40e4-421a-a57d-5cb5aae06394",
+    "name": "Smart Inventory System testing",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "New Request",
+      "id": "2b2d363a-9899-4977-bc4a-5b400b0c1652",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": ""
+        }
+      },
+      "response": []
+    }
+  ]
+}
